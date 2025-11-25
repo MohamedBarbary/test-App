@@ -29,6 +29,18 @@ const openUserName = localStorage.getItem("openUserName") || "";
 const adminView = currentUser?.admin && openUserId; // admin clicked a user
 const normalUserView = !currentUser?.admin; // normal user
 
+function formatDateArabic(dateStr) {
+  if (!dateStr) return "تاريخ غير معروف";
+  const date = new Date(dateStr);
+  const options = {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
+  return date.toLocaleDateString("ar-EG", options); // Arabic format
+}
+
 // Initialize UI
 if (adminView) {
   pageTitle.textContent = `Jobs of ${openUserName || openUserId}`;
@@ -44,21 +56,21 @@ if (adminView) {
 async function loadJobs() {
   jobsWrap.innerHTML = '<div class="note">Loading jobs…</div>';
 
-  let userId;
+  let url;
 
-  if (adminView) {
-    // If admin is viewing a specific user
-    userId = openUserId;
+  if (currentUser?.admin && adminView && openUserId) {
+    // Admin viewing a specific user → use /jobs/all?userId=...
+    url = `/jobs/all?userId=${openUserId}`;
+  } else if (currentUser?.admin && adminView) {
+    url = `/jobs/all/?userId=${currentUser.id}`;
   } else if (currentUser) {
-    // Non-admin user: always fetch their own jobs
-    userId = currentUser.id;
+    url = `/jobs/my?userId=${currentUser.id}`;
   } else {
     jobsWrap.innerHTML = '<div class="note">No user logged in</div>';
     return;
   }
 
-  // Fetch jobs for this user
-  const res = await api.get(`/jobs/my?userId=${userId}`);
+  const res = await api.get(url);
 
   if (!res || res.status !== "success") {
     jobsWrap.innerHTML = '<div class="note">Error loading jobs</div>';
@@ -73,27 +85,29 @@ async function loadJobs() {
 
   let html = '<div class="jobs-list">';
   jobs.forEach((j) => {
+    const formattedDate = formatDateArabic(j.createdAt); // use j.date if you store it
     html += `<div class="job-row">
-      <div class="job-top">
-        <div class="job-meta">
-          <div class="job-place">${escapeHtml(j.place || "")}</div>
-          <div class="muted-sm">${escapeHtml(j.description || "")}</div>
-        </div>
-        ${j.paid ? `<div class="cool-paid">PAID</div>` : ""}
+    <div class="job-top">
+      <div class="job-meta">
+        <div class="job-place">${escapeHtml(j.place || "")}</div>
+        <div class="muted-sm">${escapeHtml(j.description || "")}</div>
+        <div class="muted-sm job-date">${formattedDate}</div>
       </div>
+      ${j.paid ? `<div class="cool-paid">PAID</div>` : ""}
+    </div>
 
-      <div class="job-actions">
-        <div class="muted-sm">Salary: ${j.salary ?? "—"}</div>
-        <div style="margin-left:auto" class="job-actions">`;
+    <div class="job-actions">
+      <div class="muted-sm">الراتب: ${j.salary ?? "—"}</div>
+      <div style="margin-left:auto" class="job-actions">`;
 
-    // Admin actions
+    // Admin actions only for admins
     if (currentUser?.admin) {
       if (!j.paid)
         html += `<button class="btn small" onclick="markPaid('${j._id}')">Mark Paid</button>`;
       html += `<button class="btn small ghost" onclick="setSalary('${j._id}')">Set Salary</button>`;
       html += `<button class="btn small ghost" onclick="deleteJob('${j._id}')">Delete</button>`;
     } else {
-      // Non-admin: only allowed to see jobs, cannot modify
+      // Normal users cannot modify jobs
       html += `<span class="muted-sm">You cannot modify jobs</span>`;
     }
 

@@ -45,3 +45,9 @@ button{font-weight:600}
 /* small helpers */
 .centered { text-align:center }
 .note { font-size:13px;color:var(--muted) }
+.job-date {
+  font-size: 0.85rem;
+  color: #555;
+  margin-top: 4px;
+  direction: rtl; /* optional for proper Arabic alignment */
+}
