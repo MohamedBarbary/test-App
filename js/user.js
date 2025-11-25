@@ -43,15 +43,23 @@ if (adminView) {
 // load jobs for the correct user id
 async function loadJobs() {
   jobsWrap.innerHTML = '<div class="note">Loading jobs…</div>';
+
   let userId;
-  if (adminView) userId = openUserId;
-  else if (currentUser) userId = currentUser.id;
-  else {
+
+  if (adminView) {
+    // If admin is viewing a specific user
+    userId = openUserId;
+  } else if (currentUser) {
+    // Non-admin user: always fetch their own jobs
+    userId = currentUser.id;
+  } else {
     jobsWrap.innerHTML = '<div class="note">No user logged in</div>';
     return;
   }
 
+  // Fetch jobs for this user
   const res = await api.get(`/jobs/my?userId=${userId}`);
+
   if (!res || res.status !== "success") {
     jobsWrap.innerHTML = '<div class="note">Error loading jobs</div>';
     return;
@@ -80,15 +88,12 @@ async function loadJobs() {
 
     // Admin actions
     if (currentUser?.admin) {
-      // mark paid button (if not paid)
       if (!j.paid)
         html += `<button class="btn small" onclick="markPaid('${j._id}')">Mark Paid</button>`;
-      // edit salary (prompt)
       html += `<button class="btn small ghost" onclick="setSalary('${j._id}')">Set Salary</button>`;
-      // delete
       html += `<button class="btn small ghost" onclick="deleteJob('${j._id}')">Delete</button>`;
     } else {
-      // normal users: cannot delete or mark paid — only allowed to add job
+      // Non-admin: only allowed to see jobs, cannot modify
       html += `<span class="muted-sm">You cannot modify jobs</span>`;
     }
 
