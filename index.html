@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>JobsApp — Login</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <main class="card center">
+    <h1>JobsApp</h1>
+    <p class="muted">Sign in with phone and password</p>
+
+    <div class="form-row">
+      <input id="phone" type="text" inputmode="tel" pattern="[0-9]*" placeholder="Phone (e.g. 01012345678)" />
+    </div>
+
+    <div class="form-row">
+      <input id="password" type="password" placeholder="Password" />
+    </div>
+
+    <div class="form-row">
+      <button id="loginBtn" class="btn">Login</button>
+    </div>
+
+    <p id="msg" class="msg"></p>
+    <p class="muted small">Built for mobile — pinch to zoom off for best experience.</p>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/login.js"></script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>JobsApp — User</title>
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="left">
+      <button id="backBtn" class="btn small ghost">←</button>
+      <h1 id="pageTitle">Jobs</h1>
+    </div>
+    <div class="right">
+      <button id="logoutBtn" class="btn small">Logout</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h2 id="jobFormTitle">Add Job</h2>
+
+      <!-- Admin mode: allow admin to add salary when creating job for a user.
+           Normal user: only place + description -->
+      <div class="grid" id="jobForm">
+        <input id="place" placeholder="Place">
+        <input id="description" placeholder="Description">
+        <input id="salary" placeholder="Salary (admin only)" type="number">
+      </div>
+
+      <div class="form-row">
+        <button id="addJobBtn" class="btn">Add Job</button>
+      </div>
+      <p id="jobMsg" class="msg"></p>
+    </section>
+
+    <section class="card">
+      <h2 id="jobsTitle">Jobs</h2>
+      <div id="jobsWrap"></div>
+    </section>
+  </main>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/user.js"></script>
+</body>
+</html>
