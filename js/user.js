@@ -51,7 +51,7 @@ async function loadJobs() {
     return;
   }
 
-  const res = await api.get(`/jobs/all?userId=${userId}`);
+  const res = await api.get(`/jobs/my?userId=${userId}`);
   if (!res || res.status !== "success") {
     jobsWrap.innerHTML = '<div class="note">Error loading jobs</div>';
     return;
